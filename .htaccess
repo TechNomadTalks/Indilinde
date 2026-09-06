@@ -1,0 +1,29 @@
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "DENY"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.thegreennet.org.za; script-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self' mailto:"
+  # When adding a backend endpoint (e.g., Sanity, serverless function), update form-action above to include that origin, e.g.: form-action 'self' mailto: https://api.indilinde.org.za
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+Options -Indexes
+
+<FilesMatch "\.(htaccess|htpasswd|ini|log|conf|json|md)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_METHOD} ^(TRACE|DELETE|TRACK|DEBUG) [NC]
+  RewriteRule ^.*$ - [F,L]
+</IfModule>
+
+ErrorDocument 404 /404.html
