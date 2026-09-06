@@ -82,6 +82,32 @@
     $$('.reveal').forEach(function (el) { rIO.observe(el); });
   }
 
+  /* 3D tree scroll effect on projects timeline */
+  var tree3d = $('.tree-3d');
+  if (tree3d && mqMob.matches === false) {
+    var treeFoliage = tree3d.querySelector('.tree-foliage');
+    var treeTimer = false;
+    addEventListener('scroll', function () {
+      if (treeTimer) return;
+      treeTimer = true;
+      requestAnimationFrame(function () {
+        treeTimer = false;
+        var sec = $('#timeline');
+        if (!sec) return;
+        var r = sec.getBoundingClientRect();
+        var h = sec.offsetHeight - innerHeight;
+        var p = h > 0 ? Math.min(1, Math.max(0, (-r.top) / h)) : 0;
+        var ry = p * 25 - 12;
+        var rx = p * 8 - 4;
+        tree3d.style.transform = 'rotateY(' + ry.toFixed(2) + 'deg) rotateX(' + rx.toFixed(2) + 'deg)';
+        if (treeFoliage) {
+          var s = 1 + p * 0.25;
+          treeFoliage.style.transform = 'scale(' + s.toFixed(3) + ')';
+        }
+      });
+    }, { passive: true });
+  }
+
   /* Accordions */
   $$('.prog-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
